@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foundation Mode([docs.github.com](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site?utm_source=chatgpt.com))
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --panel-2: #1a2345;
+      --text: #eef2ff;
+      --muted: #b9c2e3;
+      --accent: #78a6ff;
+      --border: #2c396b;
+      --good: #89f0b5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #09101f 0%, #0d1430 100%);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      max-width: 750px;
+      line-height: 1.6;
+    }
+
+    .notice {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: rgba(120, 166, 255, 0.08);
+      border-radius: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .upload-panel, .summary-panel, .table-panel {
+      background: rgba(18, 25, 51, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      margin-bottom: 22px;
+    }
+
+    .upload-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    button, .file-label {
+      background: var(--accent);
+      color: #071127;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .metric-card {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--good);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    td {
+      background: rgba(255,255,255,0.01);
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin-right: 8px;
+      margin-top: 6px;
+    }
+
+    code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .error {
+      color: #ffb4b4;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 700px) {
+      h1 { font-size: 1.65rem; }
+      .container { padding: 24px 14px 40px; }
+      th, td { padding: 10px 8px; font-size: 0.93rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>Foundation Model Benchmark Results</h1>
+      <p class="subtitle">
+        This static site displays each foundation model's performance using the metrics your team discussed:
+        F1 score, accuracy, precision, and ROC-AUC averaged across all 5 datasets.
+      </p>
+      <div class="notice">
+        For GitHub Pages deployment, keep this file as <code>index.html</code> in the root of the repository or in a <code>docs/</code> folder.
+        This page will try to load <code>results.json</code> automatically. It also supports uploading a local JSON file for testing.
+      </div>
+    </section>
+
+    <section class="upload-panel">
+      <h2>Load Results</h2>
+      <p class="subtitle">
+        Option 1: Put a <code>results.json</code> file next to this page in your repo. Option 2: upload a JSON file here.
+      </p>
+      <div class="upload-row">
+        <label class="file-label" for="jsonFile">Upload JSON</label>
+        <input id="jsonFile" type="file" accept="application/json" />
+        <button id="reloadBtn" class="secondary">Reload results.json</button>
+      </div>
+      <div id="status" class="footer"></div>
+      <div id="error" class="error"></div>
+    </section>
+
+    <section class="summary-panel">
+      <h2>Project Summary</h2>
+      <div>
+        <span class="pill" id="datasetCountPill">Datasets: 5</span>
+        <span class="pill" id="modelCountPill">Models: --</span>
+      </div>
+      <div class="grid" id="overallGrid"></div>
+    </section>
+
+    <section class="table-panel">
+      <h2>Model-by-Model Results</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>F1 Score</th>
+            <th>Accuracy</th>
+            <th>Precision</th>
+            <th>ROC-AUC</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </section>
+
+    <div class="footer">
+      Expected JSON format:
+      <pre><code>{
+  "project_title": "Foundation Model Benchmark Results",
+  "dataset_count": 5,
+  "models": [
+    {
+      "name": "ResNet50",
+      "f1": 0.842,
+      "accuracy": 0.871,
+      "precision": 0.833,
+      "roc_auc": 0.914
+    }
+  ]
+}</code></pre>
+    </div>
+  </div>
+
+  <script>
+    const demoData = {
+      project_title: 'Foundation Model Benchmark Results',
+      dataset_count: 5,
+      models: [
+        { name: 'ResNet50', f1: 0.842, accuracy: 0.871, precision: 0.833, roc_auc: 0.914 },
+        { name: 'ResNet101', f1: 0.851, accuracy: 0.879, precision: 0.845, roc_auc: 0.921 },
+        { name: 'MedSigLIP-448', f1: 0.867, accuracy: 0.891, precision: 0.856, roc_auc: 0.938 }
+      ]
+    };
+
+    const statusEl = document.getElementById('status');
+    const errorEl = document.getElementById('error');
+    const resultsBody = document.getElementById('resultsBody');
+    const overallGrid = document.getElementById('overallGrid');
+    const modelCountPill = document.getElementById('modelCountPill');
+    const datasetCountPill = document.getElementById('datasetCountPill');
+    const fileInput = document.getElementById('jsonFile');
+    const reloadBtn = document.getElementById('reloadBtn');
+
+    function formatMetric(value) {
+      if (typeof value !== 'number' || Number.isNaN(value)) return '--';
+      return value.toFixed(3);
+    }
+
+    function average(values) {
+      const valid = values.filter(v => typeof v === 'number' && !Number.isNaN(v));
+      if (!valid.length) return null;
+      return valid.reduce((sum, v) => sum + v, 0) / valid.length;
+    }
+
+    function render(data, sourceLabel = 'Loaded data') {
+      errorEl.textContent = '';
+
+      const models = Array.isArray(data.models) ? data.models : [];
+      modelCountPill.textContent = `Models: ${models.length}`;
+      datasetCountPill.textContent = `Datasets: ${data.dataset_count ?? 5}`;
+      document.title = data.project_title || 'Foundation Model Results';
+
+      resultsBody.innerHTML = '';
+      models.forEach(model => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${model.name ?? 'Unnamed model'}</strong></td>
+          <td>${formatMetric(model.f1)}</td>
+          <td>${formatMetric(model.accuracy)}</td>
+          <td>${formatMetric(model.precision)}</td>
+          <td>${formatMetric(model.roc_auc)}</td>
+        `;
+        resultsBody.appendChild(row);
+      });
+
+      const overall = {
+        f1: average(models.map(m => m.f1)),
+        accuracy: average(models.map(m => m.accuracy)),
+        precision: average(models.map(m => m.precision)),
+        roc_auc: average(models.map(m => m.roc_auc))
+      };
+
+      const cards = [
+        ['Average F1 Score', overall.f1],
+        ['Average Accuracy', overall.accuracy],
+        ['Average Precision', overall.precision],
+        ['Average ROC-AUC', overall.roc_auc]
+      ];
+
+      overallGrid.innerHTML = '';
+      cards.forEach(([label, value]) => {
+        const card = document.createElement('div');
+        card.className = 'metric-card';
+        card.innerHTML = `
+          <div class="metric-label">${label}</div>
+          <div class="metric-value">${formatMetric(value)}</div>
+        `;
+        overallGrid.appendChild(card);
+      });
+
+      statusEl.textContent = `${sourceLabel}. Showing ${models.length} model result(s).`;
+    }
+
+    async function loadFromRepo() {
+      try {
+        errorEl.textContent = '';
+        const response = await fetch('./results.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Could not load results.json (${response.status})`);
+        const data = await response.json();
+        render(data, 'Loaded results.json from repository');
+      } catch (err) {
+        render(demoData, 'Could not find results.json, so demo data is being shown');
+        errorEl.textContent = err.message;
+      }
+    }
+
+    fileInput.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        render(data, `Loaded ${file.name}`);
+      } catch (err) {
+        errorEl.textContent = `Invalid JSON file: ${err.message}`;
+      }
+    });
+
+    reloadBtn.addEventListener('click', loadFromRepo);
+
+    loadFromRepo();
+  </script>
+</body>
+</html>
