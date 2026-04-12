@@ -4,7 +4,7 @@
   "models": [
     {
       "name": "Model A",
-      "f1": 0.85,
+      "f1": 0.99,
       "accuracy": 0.88,
       "precision": 0.83,
       "roc_auc": 0.91
