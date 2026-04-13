@@ -3,18 +3,11 @@
   "dataset_count": 5,
   "models": [
     {
-      "name": "Model A",
-      "f1": 0.99,
-      "accuracy": 0.88,
-      "precision": 0.83,
-      "roc_auc": 0.91
-    },
-    {
-      "name": "Model B",
-      "f1": 0.82,
-      "accuracy": 0.86,
-      "precision": 0.80,
-      "roc_auc": 0.89
+      "name": "RestNet50",
+      "f1": 0.669,
+      "accuracy": 0.683,
+      "precision": 0.668,
+      "roc_auc": 0.857
     }
   ]
 }
