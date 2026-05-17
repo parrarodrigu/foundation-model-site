@@ -1,370 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Foundation Model Benchmark Results</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --panel: #121933;
-      --panel-2: #1a2345;
-      --text: #eef2ff;
-      --muted: #b9c2e3;
-      --accent: #78a6ff;
-      --border: #2c396b;
-      --good: #89f0b5;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Foundation Model Testbench</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    * { box-sizing: border-box; }
+    <style>
+        /* Simple Bench Inspired CSS */
+        :root {
+            --text-color: #111;
+            --bg-color: #fff;
+            --border-color: #ddd;
+            --hover-bg: #f9f9f9;
+            --link-color: #0366d6;
+        }
 
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: linear-gradient(180deg, #09101f 0%, #0d1430 100%);
-      color: var(--text);
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 1000px;
+            padding: 2rem 1rem;
+        }
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 32px 20px 60px;
-    }
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--text-color);
+            padding-bottom: 1rem;
+        }
 
-    .hero {
-      margin-bottom: 28px;
-    }
+        h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 2rem;
-      line-height: 1.2;
-    }
+        p.intro {
+            font-size: 1.1rem;
+            color: #444;
+            margin: 0;
+        }
 
-    .subtitle {
-      margin: 0;
-      color: var(--muted);
-      max-width: 750px;
-      line-height: 1.6;
-    }
+        section {
+            margin-bottom: 3rem;
+        }
 
-    .notice {
-      margin-top: 16px;
-      padding: 14px 16px;
-      border: 1px solid var(--border);
-      background: rgba(120, 166, 255, 0.08);
-      border-radius: 14px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
 
-    .upload-panel, .summary-panel, .table-panel {
-      background: rgba(18, 25, 51, 0.95);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-      margin-bottom: 22px;
-    }
+        /* Sortable Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
 
-    .upload-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      margin-top: 12px;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
 
-    button, .file-label {
-      background: var(--accent);
-      color: #071127;
-      border: none;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    button.secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
+        th {
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+            white-space: nowrap;
+        }
 
-    input[type="file"] {
-      display: none;
-    }
+        th:hover {
+            background-color: var(--hover-bg);
+            color: var(--link-color);
+        }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
+        tbody tr:hover {
+            background-color: var(--hover-bg);
+        }
 
-    .metric-card {
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-    }
+        .std {
+            color: #666;
+            font-size: 0.85em;
+        }
 
-    .metric-label {
-      color: var(--muted);
-      font-size: 0.92rem;
-      margin-bottom: 10px;
-    }
-
-    .metric-value {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--good);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      overflow: hidden;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    th {
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 0.92rem;
-    }
-
-    td {
-      background: rgba(255,255,255,0.01);
-    }
-
-    .footer {
-      margin-top: 26px;
-      color: var(--muted);
-      font-size: 0.94rem;
-      line-height: 1.6;
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04);
-      color: var(--muted);
-      font-size: 0.84rem;
-      margin-right: 8px;
-      margin-top: 6px;
-    }
-
-    code {
-      background: rgba(255,255,255,0.08);
-      padding: 2px 6px;
-      border-radius: 6px;
-    }
-
-    .error {
-      color: #ffb4b4;
-      margin-top: 10px;
-    }
-
-    @media (max-width: 700px) {
-      h1 { font-size: 1.65rem; }
-      .container { padding: 24px 14px 40px; }
-      th, td { padding: 10px 8px; font-size: 0.93rem; }
-    }
-  </style>
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <section class="hero">
-      <h1>Foundation Model Benchmark Results</h1>
-      <p class="subtitle">
-        This website summarizes benchmark results for foundation models evaluated across five datasets.
-        Its goal is to present each model's performance in a clear, accessible way using F1 score, accuracy,
-        precision, and ROC-AUC.
-      </p>
-      <div class="notice">
-        For GitHub Pages deployment, keep this file as <code>index.html</code> in the root of the repository or in a <code>docs/</code> folder.
-        This page will try to load <code>results.json</code> automatically. It also supports uploading a local JSON file for testing.
-      </div>
-    </section>
 
-    <section class="upload-panel">
-      <h2>Load Results</h2>
-      <p class="subtitle">
-        Option 1: Put a <code>results.json</code> file next to this page in your repo. Option 2: upload a JSON file here.
-      </p>
-      <div class="upload-row">
-        <label class="file-label" for="jsonFile">Upload JSON</label>
-        <input id="jsonFile" type="file" accept="application/json" />
-        <button id="reloadBtn" class="secondary">Reload results.json</button>
-      </div>
-      <div id="status" class="footer"></div>
-      <div id="error" class="error"></div>
-    </section>
+    <header>
+        <h1>Foundation Model Test Bench</h1>
+        <p class="intro">Evaluating foundation model performance across various medical imaging tasks using classification, retrieval, and clustering adapters. Click on table headers to sort the results.</p>
+    </header>
 
-    <section class="summary-panel">
-      <h2>Project Summary</h2>
-      <div>
-        <span class="pill" id="datasetCountPill">Datasets: 5</span>
-        <span class="pill" id="modelCountPill">Models: --</span>
-      </div>
-      <div class="grid" id="overallGrid"></div>
-    </section>
+    <main>
+        <section id="data">
+            <h2>Results Leaderboard</h2>
+            <div class="table-container">
+                <table id="leaderboard">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Model &#x21D5;</th>
+                            <th onclick="sortTable(1)">MLP F1 (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(2)">KNN F1 (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(3)">LogReg F1 (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(4)">Recall@5 (Ret.) &#x21D5;</th>
+                            <th onclick="sortTable(5)">mAP (Ret.) &#x21D5;</th>
+                            <th onclick="sortTable(6)">NMI (Clust.) &#x21D5;</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
 
-    <section class="table-panel">
-      <h2>Model-by-Model Results</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>F1 Score</th>
-            <th>Accuracy</th>
-            <th>Precision</th>
-            <th>ROC-AUC</th>
-          </tr>
-        </thead>
-        <tbody id="resultsBody"></tbody>
-      </table>
-    </section>
+        <section id="plots">
+            <h2>Performance Overview</h2>
+            <div class="chart-container">
+                <canvas id="metricsChart"></canvas>
+            </div>
+        </section>
+    </main>
 
-    <div class="footer">
-      Expected JSON format:
-      <pre><code>{
-  "project_title": "Foundation Model Benchmark Results",
-  "dataset_count": 5,
-  "models": [
-    {
-      "name": "ResNet50",
-      "f1": 0.842,
-      "accuracy": 0.871,
-      "precision": 0.833,
-      "roc_auc": 0.914
-    }
-  ]
-}</code></pre>
-    </div>
-  </div>
+    <script>
+        // --- 1. CONFIGURATION ---
+        // Add your JSON file paths here. As you evaluate new models, add them to this array.
+        const modelFiles = [
+            'data/resnet50_results.json',
+            "data/microsoft-rad-dino_results.json",
+            "data/google-vit-base-patch16-224-in21k_results.json"
+        ];
 
-  <script>
-    const demoData = {
-      project_title: 'Foundation Model Benchmark Results',
-      dataset_count: 5,
-      models: [
-        { name: 'ResNet50', f1: 0.842, accuracy: 0.871, precision: 0.833, roc_auc: 0.914 },
-        { name: 'ResNet101', f1: 0.851, accuracy: 0.879, precision: 0.845, roc_auc: 0.921 },
-        { name: 'MedSigLIP-448', f1: 0.867, accuracy: 0.891, precision: 0.856, roc_auc: 0.938 }
-      ]
-    };
+        // --- 2. DATA LOADING & PARSING ---
+        async function loadData() {
+            const tableBody = document.getElementById('table-body');
+            const parsedResults = [];
 
-    const statusEl = document.getElementById('status');
-    const errorEl = document.getElementById('error');
-    const resultsBody = document.getElementById('resultsBody');
-    const overallGrid = document.getElementById('overallGrid');
-    const modelCountPill = document.getElementById('modelCountPill');
-    const datasetCountPill = document.getElementById('datasetCountPill');
-    const fileInput = document.getElementById('jsonFile');
-    const reloadBtn = document.getElementById('reloadBtn');
+            for (const file of modelFiles) {
+                try {
+                    const response = await fetch(file);
+                    if (!response.ok) throw new Error("File not found");
+                    const data = await response.json();
+                    
+                    // Extract model name from filename (e.g., 'data/resnet50_results.json' -> 'resnet50')
+                    const modelName = file.split('/').pop().replace('_results.json', '');
 
-    function formatMetric(value) {
-      if (typeof value !== 'number' || Number.isNaN(value)) return '--';
-      return value.toFixed(3);
-    }
+                    // Safe extraction logic handling the specific formats
+                    const getMetric = (category, metric, isClustering = false) => {
+                        if (!data[category] || !data[category][metric]) return { mean: 0, std: 0 };
+                        const arr = data[category][metric];
+                        // Clustering JSON has a dict at [0], mean at [1], std at [2]
+                        if (isClustering) return { mean: arr[1], std: arr[2] };
+                        return { mean: arr[0], std: arr[1] };
+                    };
 
-    function average(values) {
-      const valid = values.filter(v => typeof v === 'number' && !Number.isNaN(v));
-      if (!valid.length) return null;
-      return valid.reduce((sum, v) => sum + v, 0) / valid.length;
-    }
+                    const metrics = {
+                        name: modelName,
+                        mlp: getMetric('Classification', 'mlp_cv_f1'),
+                        knn: getMetric('Classification', 'knn_cv_f1'),
+                        logreg: getMetric('Classification', 'logreg_cv_f1'),
+                        recall: getMetric('Retrieval', 'recall@5'),
+                        map: getMetric('Retrieval', 'map'),
+                        nmi: getMetric('Clustering', 'nmi', true)
+                    };
 
-    function render(data, sourceLabel = 'Loaded data') {
-      errorEl.textContent = '';
+                    parsedResults.push(metrics);
+                } catch (error) {
+                    console.error(`Error loading ${file}:`, error);
+                }
+            }
 
-      const models = Array.isArray(data.models) ? data.models : [];
-      modelCountPill.textContent = `Models: ${models.length}`;
-      datasetCountPill.textContent = `Datasets: ${data.dataset_count ?? 5}`;
-      document.title = data.project_title || 'Foundation Model Results';
+            renderTable(parsedResults);
+            renderChart(parsedResults);
+        }
 
-      resultsBody.innerHTML = '';
-      models.forEach(model => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><strong>${model.name ?? 'Unnamed model'}</strong></td>
-          <td>${formatMetric(model.f1)}</td>
-          <td>${formatMetric(model.accuracy)}</td>
-          <td>${formatMetric(model.precision)}</td>
-          <td>${formatMetric(model.roc_auc)}</td>
-        `;
-        resultsBody.appendChild(row);
-      });
+        // --- 3. RENDER TABLE ---
+        function renderTable(results) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = ""; // Clear existing
 
-      const overall = {
-        f1: average(models.map(m => m.f1)),
-        accuracy: average(models.map(m => m.accuracy)),
-        precision: average(models.map(m => m.precision)),
-        roc_auc: average(models.map(m => m.roc_auc))
-      };
+            results.forEach(res => {
+                const tr = document.createElement('tr');
+                
+                // Helper to format table cells with data attributes for easy sorting
+                const createCell = (val, text) => `<td data-value="${val}">${text}</td>`;
+                const formatMetric = (metric) => {
+                    const meanStr = metric.mean.toFixed(3);
+                    const stdStr = metric.std.toFixed(3);
+                    return `<span class="mean">${meanStr}</span> <span class="std">±${stdStr}</span>`;
+                };
 
-      const cards = [
-        ['Average F1 Score', overall.f1],
-        ['Average Accuracy', overall.accuracy],
-        ['Average Precision', overall.precision],
-        ['Average ROC-AUC', overall.roc_auc]
-      ];
+                tr.innerHTML = `
+                    ${createCell(res.name, res.name)}
+                    ${createCell(res.mlp.mean, formatMetric(res.mlp))}
+                    ${createCell(res.knn.mean, formatMetric(res.knn))}
+                    ${createCell(res.logreg.mean, formatMetric(res.logreg))}
+                    ${createCell(res.recall.mean, formatMetric(res.recall))}
+                    ${createCell(res.map.mean, formatMetric(res.map))}
+                    ${createCell(res.nmi.mean, formatMetric(res.nmi))}
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-      overallGrid.innerHTML = '';
-      cards.forEach(([label, value]) => {
-        const card = document.createElement('div');
-        card.className = 'metric-card';
-        card.innerHTML = `
-          <div class="metric-label">${label}</div>
-          <div class="metric-value">${formatMetric(value)}</div>
-        `;
-        overallGrid.appendChild(card);
-      });
+        // --- 4. TABLE SORTING LOGIC ---
+        function sortTable(n) {
+            const table = document.getElementById("leaderboard");
+            let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            switching = true;
+            dir = "desc"; // Default to descending (higher is usually better)
+            
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n].getAttribute("data-value");
+                    y = rows[i + 1].getElementsByTagName("TD")[n].getAttribute("data-value");
+                    
+                    // Parse as float if numeric, else keep as string (for Model Name)
+                    let cmpX = isNaN(parseFloat(x)) ? x.toLowerCase() : parseFloat(x);
+                    let cmpY = isNaN(parseFloat(y)) ? y.toLowerCase() : parseFloat(y);
 
-      statusEl.textContent = `${sourceLabel}. Showing ${models.length} model result(s).`;
-    }
+                    if (dir === "asc") {
+                        if (cmpX > cmpY) { shouldSwitch = true; break; }
+                    } else if (dir === "desc") {
+                        if (cmpX < cmpY) { shouldSwitch = true; break; }
+                    }
+                }
+                
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount === 0 && dir === "desc") {
+                        dir = "asc";
+                        switching = true;
+                    }
+                }
+            }
+        }
 
-    async function loadFromRepo() {
-      try {
-        errorEl.textContent = '';
-        const response = await fetch('./results.json', { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Could not load results.json (${response.status})`);
-        const data = await response.json();
-        render(data, 'Loaded results.json from repository');
-      } catch (err) {
-        render(demoData, 'Could not find results.json, so demo data is being shown');
-        errorEl.textContent = err.message;
-      }
-    }
+        // --- 5. RENDER CHART ---
+        function renderChart(results) {
+            const ctx = document.getElementById('metricsChart').getContext('2d');
+            
+            const labels = results.map(r => r.name);
+            const mlpData = results.map(r => r.mlp.mean);
+            const recallData = results.map(r => r.recall.mean);
+            const nmiData = results.map(r => r.nmi.mean);
 
-    fileInput.addEventListener('change', async (event) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        render(data, `Loaded ${file.name}`);
-      } catch (err) {
-        errorEl.textContent = `Invalid JSON file: ${err.message}`;
-      }
-    });
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'MLP F1 (Classification)',
+                            data: mlpData,
+                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Recall@5 (Retrieval)',
+                            data: recallData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'NMI (Clustering)',
+                            data: nmiData,
+                            backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1.0,
+                            title: { display: true, text: 'Score' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
 
-    reloadBtn.addEventListener('click', loadFromRepo);
-
-    loadFromRepo();
-  </script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
 </body>
 </html>
