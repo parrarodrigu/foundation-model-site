@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedImage-FLEX</title>
     
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -23,26 +27,88 @@
             background-color: var(--bg-color);
             line-height: 1.6;
             margin: 0 auto;
-            max-width: 1200px; /* Slightly widened to fit the new columns nicely */
+            max-width: 1200px; 
             padding: 2rem 1rem;
         }
 
+        /* --- NEW HEADER STYLES --- */
         header {
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--text-color);
-            padding-bottom: 1rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 1rem;
         }
 
-        h1 {
+        header h1 {
             margin: 0 0 0.5rem 0;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        header .subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        header .team {
+            font-size: 1.2rem;
+            color: #444;
+            margin-bottom: 2rem;
+        }
+
+        /* --- BUTTON STYLES --- */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pill-btn {
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .pill-btn:hover {
+            background-color: #555;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* --- INTRO BLOCK STYLES --- */
+        .intro-block {
+            background-color: #f5f5f7;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            border-radius: 8px;
+        }
+
+        .intro-block h2 {
             font-size: 2rem;
+            border-bottom: none;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0;
             font-weight: 600;
         }
 
-        p.intro {
-            font-size: 1.1rem;
+        .intro-block p.intro {
+            max-width: 900px;
+            margin: 0 auto;
             color: #444;
-            margin: 0;
+            font-size: 1.1rem;
+            text-align: justify;
         }
 
         section {
@@ -106,11 +172,27 @@
 <body>
 
     <header>
-        <h1>MedImage-FLEX: Medical Image Foundation Latent Embedding eXamination</h1>
-        <p class="intro">Evaluating foundation model performance across various medical imaging tasks using classification, retrieval, and clustering adapters. Click on table headers to sort the results.</p>
+        <h1>MedImage-FLEX</h1>
+        <div class="subtitle">Medical Image Foundation Latent Embedding eXamination</div>
+        <div class="team">James Milgram, Jake Yun, Luis Parra Rodriguez, Alan B. McMillan</div>
+        
+        <div class="btn-group">
+            <a href="#data" class="pill-btn"><i class="fas fa-trophy"></i> Latest Leaderboard</a>
+            <a href="#" class="pill-btn"><i class="fas fa-file-alt"></i> Report</a>
+            <a href="#" class="pill-btn"><i class="fas fa-check-square"></i> Try Yourself</a>
+            <a href="#" class="pill-btn"><i class="fas fa-database"></i> Public Dataset</a>
+            <a href="#" class="pill-btn"><i class="fab fa-github"></i> Code</a>
+        </div>
     </header>
 
     <main>
+        <div class="intro-block">
+            <h2>Introduction</h2>
+            <p class="intro">
+                We introduce <strong>MedImage-FLEX</strong>, a comprehensive testbench evaluating foundation model performance across various medical imaging tasks using classification, retrieval, and clustering adapters. Click on table headers in the leaderboard below to sort the results and explore the current leading models.
+            </p>
+        </div>
+
         <section id="data">
             <h2>Results Leaderboard</h2>
             <div class="table-container">
