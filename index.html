@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Foundation Model Testbench</title>
+    <title>MedImage-FLEX</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -23,7 +23,7 @@
             background-color: var(--bg-color);
             line-height: 1.6;
             margin: 0 auto;
-            max-width: 1000px;
+            max-width: 1200px; /* Slightly widened to fit the new columns nicely */
             padding: 2rem 1rem;
         }
 
@@ -106,7 +106,7 @@
 <body>
 
     <header>
-        <h1>Foundation Model Test Bench</h1>
+        <h1>MedImage-FLEX: Medical Image Foundation Latent Embedding eXamination</h1>
         <p class="intro">Evaluating foundation model performance across various medical imaging tasks using classification, retrieval, and clustering adapters. Click on table headers to sort the results.</p>
     </header>
 
@@ -119,11 +119,14 @@
                         <tr>
                             <th onclick="sortTable(0)">Model &#x21D5;</th>
                             <th onclick="sortTable(1)">MLP F1 (Class.) &#x21D5;</th>
-                            <th onclick="sortTable(2)">KNN F1 (Class.) &#x21D5;</th>
-                            <th onclick="sortTable(3)">LogReg F1 (Class.) &#x21D5;</th>
-                            <th onclick="sortTable(4)">Recall@5 (Ret.) &#x21D5;</th>
-                            <th onclick="sortTable(5)">mAP (Ret.) &#x21D5;</th>
-                            <th onclick="sortTable(6)">NMI (Clust.) &#x21D5;</th>
+                            <th onclick="sortTable(2)">MLP mAUC (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(3)">KNN F1 (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(4)">KNN mAUC (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(5)">LogReg F1 (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(6)">LogReg mAUC (Class.) &#x21D5;</th>
+                            <th onclick="sortTable(7)">Recall@5 (Ret.) &#x21D5;</th>
+                            <th onclick="sortTable(8)">mAP (Ret.) &#x21D5;</th>
+                            <th onclick="sortTable(9)">NMI (Clust.) &#x21D5;</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -163,23 +166,35 @@
                     // Extract model name from filename (e.g., 'data/resnet50_results.json' -> 'resnet50')
                     const modelName = file.split('/').pop().replace('_results.json', '');
 
-                    // Safe extraction logic handling the specific formats
-                    const getMetric = (category, metric, isClustering = false) => {
-                        if (!data[category] || !data[category][metric]) return { mean: 0, std: 0 };
-                        const arr = data[category][metric];
-                        // Clustering JSON has a dict at [0], mean at [1], std at [2]
-                        if (isClustering) return { mean: arr[1], std: arr[2] };
-                        return { mean: arr[0], std: arr[1] };
+                    // Safe extraction logic handling the nested adapter formats
+                    const getStat = (path) => {
+                        try {
+                            const arr = path.reduce((obj, key) => obj[key], data);
+                            if (Array.isArray(arr)) {
+                                // Clustering JSON has a dict at [0], mean at [1], std at [2]
+                                if (typeof arr[0] === 'object') {
+                                    return { mean: arr[1], std: arr[2] };
+                                }
+                                // Standard [mean, std] array
+                                return { mean: arr[0], std: arr[1] };
+                            }
+                            return { mean: 0, std: 0 };
+                        } catch (error) {
+                            return { mean: 0, std: 0 };
+                        }
                     };
 
                     const metrics = {
                         name: modelName,
-                        mlp: getMetric('Classification', 'mlp_cv_f1'),
-                        knn: getMetric('Classification', 'knn_cv_f1'),
-                        logreg: getMetric('Classification', 'logreg_cv_f1'),
-                        recall: getMetric('Retrieval', 'recall@5'),
-                        map: getMetric('Retrieval', 'map'),
-                        nmi: getMetric('Clustering', 'nmi', true)
+                        mlp_f1: getStat(['Classification', 'mlp_cv', 'f1']),
+                        mlp_mauc: getStat(['Classification', 'mlp_cv', 'mauc']),
+                        knn_f1: getStat(['Classification', 'knn_cv', 'f1']),
+                        knn_mauc: getStat(['Classification', 'knn_cv', 'mauc']),
+                        logreg_f1: getStat(['Classification', 'logreg_cv', 'f1']),
+                        logreg_mauc: getStat(['Classification', 'logreg_cv', 'mauc']),
+                        recall: getStat(['Retrieval', 'recall@5']),
+                        map: getStat(['Retrieval', 'map']),
+                        nmi: getStat(['Clustering', 'nmi'])
                     };
 
                     parsedResults.push(metrics);
@@ -210,9 +225,12 @@
 
                 tr.innerHTML = `
                     ${createCell(res.name, res.name)}
-                    ${createCell(res.mlp.mean, formatMetric(res.mlp))}
-                    ${createCell(res.knn.mean, formatMetric(res.knn))}
-                    ${createCell(res.logreg.mean, formatMetric(res.logreg))}
+                    ${createCell(res.mlp_f1.mean, formatMetric(res.mlp_f1))}
+                    ${createCell(res.mlp_mauc.mean, formatMetric(res.mlp_mauc))}
+                    ${createCell(res.knn_f1.mean, formatMetric(res.knn_f1))}
+                    ${createCell(res.knn_mauc.mean, formatMetric(res.knn_mauc))}
+                    ${createCell(res.logreg_f1.mean, formatMetric(res.logreg_f1))}
+                    ${createCell(res.logreg_mauc.mean, formatMetric(res.logreg_mauc))}
                     ${createCell(res.recall.mean, formatMetric(res.recall))}
                     ${createCell(res.map.mean, formatMetric(res.map))}
                     ${createCell(res.nmi.mean, formatMetric(res.nmi))}
@@ -266,7 +284,7 @@
             const ctx = document.getElementById('metricsChart').getContext('2d');
             
             const labels = results.map(r => r.name);
-            const mlpData = results.map(r => r.mlp.mean);
+            const mlpData = results.map(r => r.mlp_f1.mean);
             const recallData = results.map(r => r.recall.mean);
             const nmiData = results.map(r => r.nmi.mean);
 
